@@ -4,22 +4,12 @@ Documentação do meu progresso nos Learning Paths do Burp Suite (PortSwigger), 
 
 ## Sobre
 
-Este repositório registra meu processo de estudo prático — não reproduz enunciados ou soluções das labs, apenas meu raciocínio, payloads próprios e observações técnicas.
+Este repositório registra meu processo de estudo prático. 
+Não reproduz enunciados ou soluções das labs, apenas meu raciocínio, payloads próprios e observações técnicas.
 
-## Progresso
-
-| # | Módulo | Status | Labs concluídas | Data |
-|---|--------|--------|------------------|------|
-| 01 | Web Security Fundamentals | 🔄 | 0/XX | - |
-| 02 | Advanced Web Security | ⬜ | 0/XX | - |
-| 03 | ... | ⬜ | 0/XX | - |
-
-**Legenda:** ✅ Concluído · 🔄 Em andamento · ⬜ Não iniciado
-
-## Stack de testes
 
 - Burp Suite Community/Pro
-- Ambiente: [descrever se usa VM, proxy config, etc]
+- Ambiente: Windows 11 & Kali Linux 
 
 ## Estrutura
 
@@ -32,8 +22,8 @@ XX-nome-do-modulo/
 
 ## Índice de módulos
 
-- [01 - Web Security Fundamentals](./01-web-security-fundamentals/README.md)
-- [02 - Advanced Web Security](./02-advanced-web-security/README.md)
+- [01 - Server-side-vulnerabilities](./01-Server-side-vulnerabilities/README.md)
+- [02 - SQL-injection](./02-SQL-injection/README.md)
 
 ## Contato
 
