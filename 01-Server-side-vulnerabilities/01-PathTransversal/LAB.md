@@ -1,9 +1,9 @@
 # Lab: File path traversal, simple case
 
-**Módulo:** Server-side vulnerabilities
-**Dificuldade:** Apprentice 
-**Categoria:** Path traversal
-**Status:** Resolvida
+**Módulo:** Server-side vulnerabilities //
+**Dificuldade:** Apprentice //
+**Categoria:** Path traversal //
+**Status:** Resolvida //
 
 ## Objetivo
 
