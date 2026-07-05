@@ -43,13 +43,12 @@ Ao final, conseguimos ter acesso ao banco de dados essencial para o sistema oper
 
 ## Observações técnicas
 
-Por que o servidor não bloqueia?
-Porque o desenvolvedor não implementou nenhuma sanitização no parâmetro filename. Ele deveria ter feito algo como:
+Por que o servidor não bloqueia? Porque o desenvolvedor não implementou nenhuma sanitização no parâmetro filename. Ele deveria ter feito algo como:
 
-Verificar se o caminho final realmente começa com /var/www/html/images/
-Remover ou bloquear .. do parâmetro
-Usar uma lista branca (whitelist) de arquivos permitidos
-Mas como não fez, o atacante(EU) consegue "escapar" do diretório restrito e navegar por todo o sistema de arquivos do servidor.
+- Verificar se o caminho final realmente começa com /var/www/html/images/
+- Remover ou bloquear .. do parâmetro
+- Usar uma lista branca (whitelist) de arquivos permitidos
+- Mas como não fez, o atacante(EU) consegue "escapar" do diretório restrito e navegar por todo o sistema de arquivos do servidor.
 
 ## Referências
 
