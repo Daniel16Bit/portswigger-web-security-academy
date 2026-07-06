@@ -28,7 +28,8 @@ Na explicação anterior ao lab, foi dito que também poderia haver arquivos int
 
 ```
 
-Tecnica simples de teste de URl(/robots.txt), onde testamos URL's para verificar se há algo exposto(/administrator-panel). Neste caso, havia e era obvio, mas em outras situações há proteção.
+Tecnica simples de teste de URl(/robots.txt), onde testamos URL's para verificar se há algo exposto(/administrator-panel). 
+Neste caso, havia e era obvio, mas em outras situações há proteção.
 
 ```
 
