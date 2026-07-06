@@ -42,7 +42,7 @@ Disallow: /administrator-panel
 
 ```
 A intenção é dizer: "Google, não mostre isso nos resultados de busca."
-O que ele não percebe é que: ele acabou de revelar para qualquer atacante exatamente onde fica o painel administrativo. O arquivo é público, então qualquer pessoa, incluindo um invasor, pode ler essa info.
+O que ele não percebe é que: ele acabou de revelar para qualquer atacante exatamente onde fica o painel administrativo. O arquivo é público, então qualquer pessoa (incluindo um invasor/VOCÊ) pode ler essa info.
 
 ## Evidência
 
