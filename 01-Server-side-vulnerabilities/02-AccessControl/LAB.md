@@ -1,9 +1,9 @@
-# [Nome da Lab]
+# Lab: Unprotected admin functionality
 
-**Módulo:** [nome do módulo]
-**Dificuldade:** Apprentice / Practitioner / Expert
-**Categoria:** [ex: SQL Injection, XSS, Access Control...]
-**Status:** ✅ Resolvida
+**Módulo:** Server-side vulnerabilities //
+**Dificuldade:** Apprentice //
+**Categoria:** Access control //
+**Status:**  Resolvida //
 
 ## Objetivo
 
