@@ -9,10 +9,6 @@
 
 O que a lab pede para ser alcançado (com suas palavras, sem copiar o enunciado).
 
-## Reconhecimento
-
-O que foi observado na aplicação antes de agir — endpoints, parâmetros, comportamento da aplicação, respostas anômalas.
-
 ## Abordagem
 
 Raciocínio de teste: hipóteses levantadas e por que, na ordem em que foram testadas.
