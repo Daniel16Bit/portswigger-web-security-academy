@@ -33,7 +33,7 @@ Neste caso, havia e era obvio, mas em outras situações há proteção.
 
 ```
 
-Primeiro é preciso entender a existencia do arquivo robots.txt:  é extremamente comum e essencial. Ele atua como um guia na raiz do seu site que instrui robôs de mecanismos de busca (como o Googlebot) sobre quais páginas ou pastas eles **não devem acessar**, ajudando a otimizar o orçamento de rastreamento do site. 
+Primeiro é preciso entender a existencia do arquivo robots.txt: Extremamente comum e essencial. Ele atua como um guia na raiz do seu site que instrui robôs de mecanismos de busca (como o Googlebot) sobre quais páginas ou pastas eles **não devem acessar**, ajudando a otimizar o orçamento de rastreamento do site. 
 Quando um desenvolvedor quer esconder uma página administrativa dos mecanismos de busca, ele faz algo como:
 
 ```
