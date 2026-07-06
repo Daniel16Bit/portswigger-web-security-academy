@@ -41,4 +41,4 @@ O que foi obtido/comprovado ao final do teste.
 
 ## Referências
 
-- [PortSwigger Web Security Academy](https://portswigger.net/web-security) (link para o tópico, não para a lab específica com solução)
+- [PortSwigger Web Security Academy](https://portswigger.net/web-security/access-control) (link para o tópico, não para a lab específica com solução)
