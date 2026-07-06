@@ -11,7 +11,9 @@ Lab pede para que seja acessado o painel administrador e que o usuario CARLOS se
 
 # Reconhecimento
 
-Assim como informado pelo enunciado, este lab tem uma um painel administrativo sem proteção. Com essa ideia, deveriamos apenas descobrir qual o URl feito. Na explicação anterior ao lab, foi dito que também poderia haver arquivos internos com acesso (nesse caso, robots.txt), devido a isso só foi usado a lógica basica. 
+Assim como informado pelo enunciado, este lab tem uma um painel administrativo sem proteção. 
+Com essa ideia, deveriamos apenas descobrir qual o URl feito. 
+Na explicação anterior ao lab, foi dito que também poderia haver arquivos internos com acesso (nesse caso, robots.txt), devido a isso só foi usado a lógica basica. 
 
 ## Abordagem
 
