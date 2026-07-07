@@ -11,7 +11,9 @@ Lab pede para que seja acessado o painel administrador e que o usuario CARLOS se
 
 # Reconhecimento
 
-Assim como informado pelo enunciado, este lab tem uma um painel administrativo sem proteção. Com essa ideia, deveriamos apenas descobrir qual o URl feito. Na explicação anterior ao lab, foi dito que também poderia haver arquivos internos com acesso (nesse caso, robots.txt), devido a isso só foi usado a lógica basica. 
+Assim como informado pelo enunciado, este lab tem uma um painel administrativo sem proteção. 
+Com essa ideia, deveriamos apenas descobrir qual o URl exposto. 
+Na explicação anterior ao lab, foi dito que também poderia haver arquivos internos com acesso (nesse caso, robots.txt), devido a isso só foi usado a lógica basica. 
 
 ## Abordagem
 
@@ -26,11 +28,12 @@ Assim como informado pelo enunciado, este lab tem uma um painel administrativo s
 
 ```
 
-Tecnica simples de teste de URl(/robots.txt), onde testamos URL's para verificar se há algo exposto(/administrator-panel). Neste caso, havia e era obvio, mas em outras situações há proteção.
+Tecnica simples de teste de URl(/robots.txt), onde testamos URL's para verificar se há algo exposto(/administrator-panel). 
+Neste caso, havia e era obvio, mas em outras situações há proteção.
 
 ```
 
-Primeiro é preciso entender a existencia do arquivo robots.txt:  é extremamente comum e essencial. Ele atua como um guia na raiz do seu site que instrui robôs de mecanismos de busca (como o Googlebot) sobre quais páginas ou pastas eles **não devem acessar**, ajudando a otimizar o orçamento de rastreamento do site. 
+Primeiro é preciso entender a existencia do arquivo robots.txt: Extremamente comum e essencial. Ele atua como um guia na raiz do seu site que instrui robôs de mecanismos de busca (como o Googlebot) sobre quais páginas ou pastas eles **não devem acessar**, ajudando a otimizar o orçamento de rastreamento do site. 
 Quando um desenvolvedor quer esconder uma página administrativa dos mecanismos de busca, ele faz algo como:
 
 ```
@@ -39,7 +42,7 @@ Disallow: /administrator-panel
 
 ```
 A intenção é dizer: "Google, não mostre isso nos resultados de busca."
-O que ele não percebe é que: ele acabou de revelar para qualquer atacante exatamente onde fica o painel administrativo. O arquivo é público, então qualquer pessoa, incluindo um invasor, pode ler essa info.
+O que ele não percebe é que: ele acabou de revelar para qualquer atacante exatamente onde fica o painel administrativo. O arquivo é público, então qualquer pessoa (incluindo um invasor/VOCÊ) pode ler essa info.
 
 ## Evidência
 
