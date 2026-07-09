@@ -14,7 +14,7 @@
 
 # Reconhecimento
 
-Assim como informado pelo enunciado, este lab tem uma um painel administrativo, mas com acesso somnete com o perfil correto. Com essa ideia, nosso objetivo é burlar essa proteção.
+Assim como informado pelo enunciado, este lab tem uma um painel administrativo, mas com acesso somente com o perfil correto. Com essa ideia, nosso objetivo é burlar essa proteção.
 
 ## Abordagem
 - Foi realizado um reconhecimento visual da aplicação para compreender sua estrutura e funcionamento.
