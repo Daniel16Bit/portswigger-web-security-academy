@@ -14,22 +14,24 @@ Você pode fazer login na sua própria conta usando as seguintes credenciais: wi
 
 # Reconhecimento
 
-Primeiro é preciso entender que o Lab tem uma falha de escalonamento de privilegio "horizontal para vertical". Onde um usuario comum sobe seus privilegios de alguma forma.
+Primeiro é preciso entender que o laboratório possui uma falha de escalonamento de privilégios **horizontal para vertical**, onde um usuário comum consegue elevar seus privilégios e acessar recursos administrativos.
 
-Nível de privilégio
-                   ▲
-                   │
-      VERTICAL     │        Admin / Root
-      (sobe)       │
-                   │
-      ─────────────┼───────────────────
-                   │
-      HORIZONTAL   │    Usuário A  ←→  Usuário B
-      (mesmo nível)│    (comum)         (comum)
-                   │
-                   │        Usuário C
-                   │        (convidado / restrito)
-                   ▼
+```text
+                    Nível de Privilégio
+                           ▲
+                           │
+        VERTICAL           │        Administrator / Root
+       (elevação)          │
+                           │
+───────────────────────────┼──────────────────────────────
+                           │
+      HORIZONTAL           │    Usuário A  ←→  Usuário B
+     (mesmo nível)         │      (comum)        (comum)
+                           │
+                           │    Usuário C
+                           │    (convidado/restrito)
+                           ▼
+```
 
 
 
