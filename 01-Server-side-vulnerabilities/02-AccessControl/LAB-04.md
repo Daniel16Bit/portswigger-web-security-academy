@@ -42,7 +42,7 @@ Neste laboratório não foi necessário utilizar payloads ou manipular requisiç
 
 ## Resultado
 
-Submetido o GUID ao Lab, assi como pedido.
+Submetido o GUID ao Lab, assim como pedido.
 
 ## Observações técnicas
 
