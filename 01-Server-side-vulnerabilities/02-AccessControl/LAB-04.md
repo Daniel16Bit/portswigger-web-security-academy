@@ -23,7 +23,7 @@ Assim como informado previamente, este lab contem um vuln do tipo escalonamento 
 
 - Foi realizado um reconhecimento visual da aplicação para compreender sua estrutura e funcionamento.
 - Com base nas informações fornecidas pelo enunciado, foi possível definir o próximo passo da análise.
-- Primeiro, foi verificado via inspeção de elemtentos se há algo de estranho que possa ser usado.
+- Primeiro, foi verificado via inspeção de elementos se há algo de estranho que possa ser usado.
 - Como nada foi descoberto, partimos para verificar o site de forma mais detalhada.
 --
 - Ao analisar o site de forma mais detalhista, foi reconhecido uma falha via URL's ao acessar postagens referentes aos usuario.
