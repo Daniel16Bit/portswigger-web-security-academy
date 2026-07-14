@@ -33,8 +33,7 @@ Neste laboratório não foi necessário utilizar payloads ou manipular requisiç
 
 ## Evidência
 
-![descrição do print](lab03.png)
-
+![Resultado](imgs/lab03.png)
 ## Resultado
 
 Usuario excluido com sucesso ao invadir o painel admin.

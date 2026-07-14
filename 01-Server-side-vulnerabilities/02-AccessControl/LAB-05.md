@@ -65,7 +65,7 @@ Primeiro é preciso entender que o laboratório possui uma falha de escalonament
 
 ## Evidência
 
-![descrição do print](lab05.png)
+![Resultado](imgs/lab05.png)
 
 ## Resultado
 

@@ -38,8 +38,7 @@ Neste laboratório não foi necessário utilizar payloads ou manipular requisiç
 
 ## Evidência
 
-![Resultado](lab04.png)
-
+![Resultado](imgs/lab04.png)
 ## Resultado
 
 Submetido o GUID ao Lab, assim como pedido.

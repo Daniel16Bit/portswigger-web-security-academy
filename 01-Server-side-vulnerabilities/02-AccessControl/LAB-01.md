@@ -46,7 +46,7 @@ O que ele não percebe é que: ele acabou de revelar para qualquer atacante exat
 
 ## Evidência
 
-![Resultado](lab01.png)
+![Resultado](imgs/lab01.png)
 
 ## Resultado
 

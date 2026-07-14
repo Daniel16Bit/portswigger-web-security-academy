@@ -34,8 +34,7 @@ Neste laboratório não foi necessário utilizar payloads ou manipular requisiç
 
 ## Evidência
 
-![Resultado](lab02.png)
-
+![Resultado](imgs/lab02.png)
 ## Resultado
 
 Usuario excluido com sucesso ao invadir o painel admin.
