@@ -54,9 +54,9 @@ Utilizando a lista proposta pelo Lab
 
 ## Evidência
 
-![LabCompleto](Lab01-A.png)
+![LabCompleto](imgs/Lab01-A.png)
 ----------------------------
-![LabCompleto](Lab01-B.png)
+![LabCompleto](imgs/Lab01-B.png)
 
 ## Resultado
 
