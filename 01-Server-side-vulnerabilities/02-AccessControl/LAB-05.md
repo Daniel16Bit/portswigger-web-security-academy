@@ -41,7 +41,7 @@ Nível de privilégio
 - Sabendo o tipo de falha que há, fomos direto tentar verificar via inspeção de elementos, ver se há algo relacionado ao GUID ou algum arquivo aberto, mas sem resultado. 
 - Levando em conta que o ID fica exposto na URL, usamos isso mudando a URL de wiener para administrador
 - Por surpresa (quase obvia), era este o segredo para acessar, mas ainda faltava acessar a senha do usuario admin
-- levando em conta isso, usamos o BURP para capturar a solicitação de login do administrador e por tabela, a senha
+- levando isso em conta, usamos o BURP para capturar a solicitação de login do administrador e por tabela, a senha
 
 ```
 
