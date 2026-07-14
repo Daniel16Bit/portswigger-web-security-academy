@@ -18,7 +18,7 @@ Para resolver o laboratório, enumere um nome de utilizador válido, utilize um 
 
 ## Reconhecimento
 Antes de qualquer coisa é preciso entender como iremos forçar a vulnerabilidade.
-Para forçarmos ela, podemos usar dois programas:
+Para forçarmos ela, podemos usar algum dos dois programas abaixo:
 
 - Burp suite na função **INTRUDER**, contudo, recomendado o pro, pois o community demora MUITO.
 Caso não tenha o PRO
