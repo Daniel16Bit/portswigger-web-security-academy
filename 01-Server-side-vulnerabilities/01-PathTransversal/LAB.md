@@ -35,7 +35,7 @@ O site tem uma função que carrega imagens baseada em um parâmetro na URL. Int
 
 ## Evidência
 
-![Resultado](resultado.png)
+![Resultado](imgs/resultado.png)
 
 ## Resultado
 
