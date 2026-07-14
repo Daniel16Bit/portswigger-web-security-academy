@@ -1,4 +1,4 @@
- # Lab: Username enumeration via different responses
+ # Lab: 2FA simple bypass
 
 **Módulo:** Server-side vulnerabilities //
 **Dificuldade:** Apprentice //
@@ -7,79 +7,66 @@
 
 ## Objetivo
 
-Este laboratório está vulnerável a ataques de enumeração de nomes de utilizador e de força bruta à palavra-passe. 
-Possui uma conta com um nome de utilizador e uma palavra-passe previsíveis, que podem ser encontrados nas seguintes listas de palavras:
+A autenticação de dois fatores deste laboratório pode ser contornada. Já obteve um nome de utilizador e uma palavra-passe válidos, mas não tem acesso ao código de verificação 2FA do utilizador. Para resolver o laboratório, aceda à página da conta do Carlos.
 
-- [Candidate usernames](https://portswigger.net/web-security/authentication/auth-lab-usernames)
-- [Candidate passwords](https://portswigger.net/web-security/authentication/auth-lab-passwords)
-
-Para resolver o laboratório, enumere um nome de utilizador válido, utilize um ataque de força bruta para descobrir a palavra-passe desse utilizador e, em seguida, aceda à página da sua conta.
+- As suas credenciais: wiener:peter
+- Credenciais da vítima: carlos:montoya
 
 
 ## Reconhecimento
-Antes de qualquer coisa é preciso entender como iremos forçar a vulnerabilidade.
-Para forçarmos ela, podemos usar algum dos dois programas abaixo:
 
-- Burp suite na função **INTRUDER**, contudo, recomendado o pro, pois o community demora MUITO.
-  
-(Caso não tenha o PRO)
+Ao analisar o fluxo de autenticação, foi observado que o sistema utiliza autenticação em dois fatores (2FA).
 
-- OWASP ZAP (Ou só Zap) na função **FUZZ**. É mais rapido e gratuito.
+Inicialmente foi realizado login com a conta fornecida (`wiener:peter`) para compreender o funcionamento da aplicação. 
+Após informar usuário e senha, o sistema solicita um código de verificação enviado por e-mail.
 
-Neste caso, iremos usar o Zap.
+Durante esse processo foi identificado que, antes mesmo de inserir o código 2FA, a sessão do usuário já havia sido criada.
 
 
 ## Abordagem
 
-- Localizamos a URL do /login e efetuamos uma tentativa qualquer de entrada (usuario e senha) 
-- Com isso, capturamos a solitação POST e podemos efetuar o *brute force*.
-- Com o brute force finalizado, foi possivel conseguir o usuario e senha, entrando assim no perfil pedido.
-
-
+- Foi realizado login utilizando as credenciais da vítima (`carlos:montoya`).
+- Após o redirecionamento para a página de verificação 2FA (`/login2`), o código não foi informado.
+- Em vez disso, a URL foi alterada manualmente para `/my-account`.
+- O servidor permitiu o acesso direto à página da conta da vítima, ignorando a etapa obrigatória de verificação do segundo fator.
+- Com isso, o laboratório foi concluído.
 
 ## Payload / Técnica utilizada
 
-### Enumeração de usuário
+### Bypass da autenticação em dois fatores
 
-Foi realizado um ataque de fuzzing no parâmetro `username` e `password`.
+Não foi necessário utilizar payloads ou ataques de força bruta.
 
-Exemplo de requisição:
+A exploração consistiu apenas em alterar manualmente a URL: /login2 → /my-account
 
-POST /login HTTP/1.1
+A aplicação validava apenas a existência da sessão autenticada, sem verificar se o processo de autenticação 2FA havia sido concluído.
 
-username=§USER§
-password=§PASSWORD§
-
-Utilizando a lista proposta pelo Lab
 
 ## Evidência
 
-![LabCompleto](Lab01-A.png)
-----------------------------
-![LabCompleto](Lab01-B.png)
+![LabCompleto](imgs/LAB-02.png)
+
 
 ## Resultado
 
-O ataque permitiu identificar um nome de usuário válido através das diferenças nas mensagens retornadas pelo servidor.
+Foi possível acessar a página da conta do usuário **Carlos** sem possuir o código de autenticação de dois fatores, demonstrando uma falha na implementação do fluxo de autenticação.
 
 ## Observações técnicas
 
-Por que a falha ocorre?
+### Por que a falha ocorre?
 
-- A vulnerabilidade ocorre porque a aplicação fornece respostas diferentes para usuários existentes e inexistentes durante o processo de autenticação.
+A aplicação cria uma sessão autenticada imediatamente após a validação do usuário e senha.
 
-- Essas diferenças podem aparecer nas mensagens exibidas, no código HTTP, no tamanho da resposta ou até mesmo no tempo de processamento.
+A etapa de autenticação em dois fatores funciona apenas como uma página intermediária, mas não é validada quando o usuário acessa recursos protegidos.
 
-- Esse comportamento permite que um atacante descubra quais contas são válidas antes mesmo de tentar descobrir suas senhas, reduzindo significativamente o esforço necessário para um ataque de força bruta.
+Dessa forma, basta acessar diretamente uma página autenticada para ignorar completamente o 2FA.
 
-Como mitigar?
+### Como mitigar?
 
-- Utilizar mensagens de erro genéricas, como "Usuário ou senha inválidos", independentemente da causa da falha.
-- Manter respostas com tamanho e tempo de processamento semelhantes para todas as tentativas de autenticação.
-- Implementar limitação de tentativas (Rate Limiting).
-- Bloquear temporariamente contas após diversas tentativas consecutivas.
-- Utilizar autenticação multifator (MFA), reduzindo o impacto da descoberta da senha.
-- Monitorar tentativas repetidas de login para identificar possíveis ataques automatizados.
+- Criar a sessão autenticada somente após a validação do segundo fator.
+- Utilizar um estado intermediário para usuários que ainda não concluíram o 2FA.
+- Verificar, em todas as páginas protegidas, se a autenticação em dois fatores foi concluída antes de liberar o acesso.
+- Impedir o acesso direto a recursos protegidos enquanto o processo de autenticação estiver incompleto.
 
 ## Referências
 
