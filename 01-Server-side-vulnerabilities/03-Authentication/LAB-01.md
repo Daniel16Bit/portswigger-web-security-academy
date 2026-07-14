@@ -21,7 +21,9 @@ Antes de qualquer coisa é preciso entender como iremos forçar a vulnerabilidad
 Para forçarmos ela, podemos usar algum dos dois programas abaixo:
 
 - Burp suite na função **INTRUDER**, contudo, recomendado o pro, pois o community demora MUITO.
-Caso não tenha o PRO
+  
+(Caso não tenha o PRO)
+
 - OWASP ZAP (Ou só Zap) na função **FUZZ**. É mais rapido e gratuito.
 
 Neste caso, iremos usar o Zap.
