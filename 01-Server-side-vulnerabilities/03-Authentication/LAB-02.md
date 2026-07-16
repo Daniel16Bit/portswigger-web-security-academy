@@ -56,9 +56,9 @@ Foi possível acessar a página da conta do usuário **Carlos** sem possuir o c�
 ### Por que a falha ocorre?
 
 A aplicação cria uma sessão autenticada imediatamente após a validação do usuário e senha.
-
+-
 A etapa de autenticação em dois fatores funciona apenas como uma página intermediária, mas não é validada quando o usuário acessa recursos protegidos.
-
+-
 Dessa forma, basta acessar diretamente uma página autenticada para ignorar completamente o 2FA.
 
 ### Como mitigar?
