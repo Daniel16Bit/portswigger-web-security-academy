@@ -50,7 +50,7 @@ stockApi=http://localhost/admin/delete?username=carlos
 
 ## Evidência
 
-![Evidência-01](imgs/Lab02.png)
+![Evidência-01](imgs/Lab01.png)
 ![Evidência-02](imgs/Lab02.png)
 
 ## Resultado
