@@ -12,7 +12,7 @@ Módulo de nivel "APRENDIZ" do Burp. O Lab introduz de forma simples vulnerabili
 
 | Lab | Dificuldade | Status | Link |
 |-----|-------------|--------|------|
-| Path traversal | Apprentice | ✅ | [resolução](./01-PathTransversal/) |
+| Path traversal | Apprentice | ✅ | [resolução](./01-PathTraversal/) |
 | Access control | Apprentice | ✅ | [resolução](./02-AccessControl/) |
 | Authentication | Apprentice | ✅ | [resolução](./03-Authentication/) |
 | Server-side request forgery (SSRF) | Apprentice | ✅ | [resolução](./04-Server-SideRequestForgery(SSRF)/) |

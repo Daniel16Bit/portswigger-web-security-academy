@@ -1,86 +1,95 @@
- # Lab: Username enumeration via different responses
+> 🌐 **English** | [Português](LAB-01.pt-BR.md)
 
-**Módulo:** Server-side vulnerabilities //
-**Dificuldade:** Apprentice //
-**Categoria:** Authentication //
-**Status:** Resolvida //
+# Lab: Username enumeration via different responses
 
-## Objetivo
+**Module:** Server-side vulnerabilities //
+**Difficulty:** Apprentice //
+**Category:** Authentication //
+**Status:** Solved //
 
-Este laboratório está vulnerável a ataques de enumeração de nomes de utilizador e de força bruta à palavra-passe. 
-Possui uma conta com um nome de utilizador e uma palavra-passe previsíveis, que podem ser encontrados nas seguintes listas de palavras:
+## Goal
+
+This lab is vulnerable to username enumeration and password brute-force attacks.
+It has an account with a predictable username and password, which can be found in the following wordlists:
 
 - [Candidate usernames](https://portswigger.net/web-security/authentication/auth-lab-usernames)
 - [Candidate passwords](https://portswigger.net/web-security/authentication/auth-lab-passwords)
 
-Para resolver o laboratório, enumere um nome de utilizador válido, utilize um ataque de força bruta para descobrir a palavra-passe desse utilizador e, em seguida, aceda à página da sua conta.
+To solve the lab, enumerate a valid username, brute-force this user's password, and then access their account page.
 
+## Recon
 
-## Reconhecimento
-Antes de qualquer coisa é preciso entender como iremos forçar a vulnerabilidade.
-Para forçarmos ela, podemos usar algum dos dois programas abaixo:
+Before anything else, we need to decide how we'll drive the attack.
+To do so, we can use either of the two tools below:
 
-- Burp suite na função **INTRUDER**, contudo, recomendado o pro, pois o community demora MUITO.
-  
-(Caso não tenha o PRO)
+- Burp Suite with the **Intruder** function — Pro is recommended, since Community throttles Intruder and is VERY slow.
 
-- OWASP ZAP (Ou só Zap) na função **FUZZ**. É mais rapido e gratuito.
+(If you don't have Pro)
 
-Neste caso, iremos usar o Zap.
+- OWASP ZAP (or just ZAP) with the **Fuzz** function. It's faster and free.
 
+In this case, we'll use ZAP.
 
-## Abordagem
+## Approach
 
-- Localizamos a URL do /login e efetuamos uma tentativa qualquer de entrada (usuario e senha) 
-- Com isso, capturamos a solitação POST e podemos efetuar o *brute force*.
-- Com o brute force finalizado, foi possivel conseguir o usuario e senha, entrando assim no perfil pedido.
+- Located the `/login` URL and made a dummy login attempt (any username and password).
+- With that, we captured the POST request and could run the attack.
+- The attack is done in two stages: first enumerate a valid username, then brute-force that user's password.
+- Once the password was cracked, it was possible to log in to the requested account.
 
+## Payload / Technique used
 
+### 1. Username enumeration
 
-## Payload / Técnica utilizada
+A fuzzing attack was run against the `username` parameter only, keeping the `password` fixed. The valid username is identified by the difference in the server's response (a different error message for existing vs. non-existing accounts).
 
-### Enumeração de usuário
-
-Foi realizado um ataque de fuzzing no parâmetro `username` e `password`.
-
-Exemplo de requisição:
-
+```
 POST /login HTTP/1.1
 
 username=§USER§
+password=anything
+```
+
+### 2. Password brute-force
+
+With the valid username in hand, a second attack was run — this time fixing `username` and fuzzing `password` against the candidate passwords wordlist. The valid password is the one that breaks the pattern (e.g., a `302` redirect or a response without the error message).
+
+```
+POST /login HTTP/1.1
+
+username=<valid_user>
 password=§PASSWORD§
+```
 
-Utilizando a lista proposta pelo Lab
+Both stages use the wordlists provided by the lab.
 
-## Evidência
+## Evidence
 
-![LabCompleto](imgs/Lab01-A.png)
+![LabComplete](imgs/Lab01-A.png)
 ----------------------------
-![LabCompleto](imgs/Lab01-B.png)
+![LabComplete](imgs/Lab01-B.png)
 
-## Resultado
+## Result
 
-O ataque permitiu identificar um nome de usuário válido através das diferenças nas mensagens retornadas pelo servidor.
+The attack made it possible to identify a valid username through the differences in the messages returned by the server, and then brute-force the corresponding password to access the account.
 
-## Observações técnicas
+## Technical notes
 
-Por que a falha ocorre?
+Why does the flaw occur?
 
-- A vulnerabilidade ocorre porque a aplicação fornece respostas diferentes para usuários existentes e inexistentes durante o processo de autenticação.
+- The vulnerability occurs because the application returns different responses for existing and non-existing users during authentication.
+- These differences can appear in the displayed messages, the HTTP status code, the response length, or even the processing time.
+- This behavior lets an attacker discover which accounts are valid before even trying to crack their passwords, significantly reducing the effort needed for a brute-force attack.
 
-- Essas diferenças podem aparecer nas mensagens exibidas, no código HTTP, no tamanho da resposta ou até mesmo no tempo de processamento.
+How to mitigate?
 
-- Esse comportamento permite que um atacante descubra quais contas são válidas antes mesmo de tentar descobrir suas senhas, reduzindo significativamente o esforço necessário para um ataque de força bruta.
+- Use generic error messages, such as "Invalid username or password", regardless of the cause of the failure.
+- Keep responses with similar length and processing time for all authentication attempts.
+- Implement rate limiting.
+- Temporarily lock accounts after several consecutive failed attempts.
+- Use multi-factor authentication (MFA) to reduce the impact of a leaked password.
+- Monitor repeated login attempts to detect possible automated attacks.
 
-Como mitigar?
+## References
 
-- Utilizar mensagens de erro genéricas, como "Usuário ou senha inválidos", independentemente da causa da falha.
-- Manter respostas com tamanho e tempo de processamento semelhantes para todas as tentativas de autenticação.
-- Implementar limitação de tentativas (Rate Limiting).
-- Bloquear temporariamente contas após diversas tentativas consecutivas.
-- Utilizar autenticação multifator (MFA), reduzindo o impacto da descoberta da senha.
-- Monitorar tentativas repetidas de login para identificar possíveis ataques automatizados.
-
-## Referências
-
-- [PortSwigger Web Security Academy](https://portswigger.net/web-security/authentication) (link para o tópico, não para a lab específica com solução)
+- [PortSwigger Web Security Academy](https://portswigger.net/web-security/authentication) (link to the topic, not to the specific lab solution)

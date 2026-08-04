@@ -1,96 +1,98 @@
+> 🌐 **English** | [Português](LAB-01.pt-BR.md)
+
 # Lab: Remote code execution via web shell upload
 
-**Módulo:** Server-side vulnerabilities //
-**Dificuldade:** Apprentice //
-**Categoria:** File upload vulnerabilities //
-**Status:** Resolvida
+**Module:** Server-side vulnerabilities //
+**Difficulty:** Apprentice //
+**Category:** File upload vulnerabilities //
+**Status:** Solved //
 
-## Objetivo
+## Goal
 
-Este laboratório possui uma funcionalidade de upload de imagens vulnerável, que não realiza qualquer validação dos arquivos enviados antes de armazená-los no sistema de arquivos do servidor.
+This lab has a vulnerable image upload feature that performs no validation of the uploaded files before storing them on the server's file system.
 
-Para resolver o laboratório, era necessário enviar um web shell em PHP, executá-lo no servidor para obter o conteúdo do arquivo `/home/carlos/secret` e, em seguida, submeter o segredo utilizando o botão disponibilizado pelo laboratório.
+To solve the lab, it was necessary to upload a PHP web shell, execute it on the server to read the contents of `/home/carlos/secret`, and then submit the secret using the button provided by the lab.
 
-Foi utilizada a conta fornecida pelo próprio exercício:
+The account provided by the exercise itself was used:
 
 ```
-Usuário: wiener
-Senha: peter
+Username: wiener
+Password: peter
 ```
 
-## Reconhecimento
+## Recon
 
-O enunciado informa que a funcionalidade de upload não realiza validação dos arquivos enviados, indicando uma possível vulnerabilidade de **File Upload** capaz de permitir a execução de código remoto.
+The lab description states that the upload feature does not validate the uploaded files, indicating a possible **File Upload** vulnerability capable of allowing remote code execution.
 
-Após realizar o upload de uma imagem de teste e interceptar a requisição utilizando o Burp Suite, foi possível analisar tanto a requisição **POST**, responsável pelo envio do arquivo, quanto a requisição **GET**, utilizada posteriormente para acessar o arquivo armazenado.
+After uploading a test image and intercepting the request with Burp Suite, it was possible to analyze both the **POST** request (responsible for sending the file) and the **GET** request (later used to access the stored file).
 
-Essa análise demonstrou que os arquivos enviados eram disponibilizados diretamente pelo servidor, levantando a hipótese de que seria possível enviar um arquivo PHP em vez de uma imagem e executá-lo remotamente.
+This analysis showed that the uploaded files were served directly by the server, raising the hypothesis that it would be possible to upload a PHP file instead of an image and execute it remotely.
 
-## Abordagem
+## Approach
 
-- Realizamos login utilizando as credenciais fornecidas pelo laboratório.
-- Acessamos a funcionalidade de upload de avatar.
-- Efetuamos o upload de uma imagem qualquer para compreender o funcionamento da aplicação.
-- Interceptamos a requisição **POST** utilizando o Burp Suite.
-- Substituímos o conteúdo da imagem por um arquivo PHP contendo um web shell simples.
-- Encaminhamos a requisição modificada ao servidor.
-- Após o upload, interceptamos a requisição **GET** responsável por acessar a imagem enviada.
-- Alteramos o caminho do arquivo para acessar o arquivo PHP enviado ao servidor.
-- Ao acessar o arquivo, o código PHP foi executado pelo servidor e retornou o conteúdo de `/home/carlos/secret`.
-- O segredo obtido foi enviado ao laboratório, concluindo o desafio.
+- Logged in using the credentials provided by the lab.
+- Accessed the avatar upload feature.
+- Uploaded any image to understand how the application works.
+- Intercepted the **POST** request using Burp Suite.
+- Replaced the image content with a PHP file containing a simple web shell.
+- Forwarded the modified request to the server.
+- After the upload, intercepted the **GET** request responsible for accessing the uploaded image.
+- Changed the file path to access the PHP file uploaded to the server.
+- Upon accessing the file, the PHP code was executed by the server and returned the contents of `/home/carlos/secret`.
+- The obtained secret was submitted to the lab, completing the challenge.
 
-## Payload / Técnica utilizada
+## Payload / Technique used
 
-### Conteúdo enviado via POST
+### Content sent via POST
 
 ```php
 <?php echo file_get_contents('/home/carlos/secret'); ?>
 ```
 
-### Requisição original
+### Original request
 
 ```http
 GET /files/avatars/cat.png HTTP/1.1
 ```
 
-### Requisição modificada
+### Modified request
 
 ```http
 GET /files/avatars/exploit.php HTTP/1.1
 ```
 
-## Evidência
+## Evidence
 
-![Evidência-01](imgs/Lab-01A.png)
+![Evidence-01](imgs/Lab-01A.png)
 
-![Evidência-02](imgs/Lab-01B.png)
+![Evidence-02](imgs/Lab-01B.png)
 
-## Resultado
+## Result
 
-A exploração confirmou uma vulnerabilidade de **Unrestricted File Upload**, permitindo o envio e a execução de um arquivo PHP diretamente no servidor.
+The exploitation confirmed an **Unrestricted File Upload** vulnerability, allowing a PHP file to be uploaded and executed directly on the server.
 
-Como consequência, foi possível obter execução remota de código (Remote Code Execution - RCE) e acessar informações sensíveis armazenadas no sistema de arquivos, neste caso o conteúdo do arquivo `/home/carlos/secret`, suficiente para concluir o laboratório.
+As a consequence, it was possible to achieve remote code execution (RCE) and access sensitive information stored on the file system — in this case the contents of `/home/carlos/secret`, enough to complete the lab.
 
-## Observações técnicas
+## Technical notes
 
-### Por que a falha ocorre?
+### Why does the flaw occur?
 
-- A aplicação aceita arquivos enviados pelo usuário sem validar sua extensão ou conteúdo.
-- O servidor armazena esses arquivos em um diretório acessível pela web.
-- Como o servidor interpreta arquivos PHP, um atacante pode enviar código malicioso e executá-lo simplesmente acessando sua URL.
-- Esse comportamento caracteriza uma vulnerabilidade de **Unrestricted File Upload**, frequentemente resultando em **Remote Code Execution (RCE)**.
+- The application accepts user-uploaded files without validating their extension or content.
+- The server stores these files in a web-accessible directory.
+- Since the server interprets PHP files, an attacker can upload malicious code and execute it simply by accessing its URL.
+- This behavior characterizes an **Unrestricted File Upload** vulnerability, frequently resulting in **Remote Code Execution (RCE)**.
 
-### Como mitigar?
+### How to mitigate?
 
-- Permitir apenas tipos específicos de arquivos (*allowlist*), em vez de bloquear extensões conhecidas.
-- Validar o tipo MIME e a assinatura (*magic bytes*) do arquivo enviado.
-- Armazenar uploads fora da raiz pública da aplicação.
-- Configurar o servidor para impedir a execução de scripts em diretórios destinados a uploads.
-- Renomear os arquivos enviados para evitar manipulação de extensões e caminhos.
-- Implementar mecanismos de autenticação e autorização para acesso aos arquivos enviados.
+- Allow only specific file types (*allowlist*), instead of blocking known extensions.
+- Validate the MIME type and the signature (*magic bytes*) of the uploaded file.
+- Store uploads outside the application's public root.
+- Configure the server to prevent script execution in upload directories.
+- Rename uploaded files to avoid extension and path manipulation.
+- Implement authentication and authorization mechanisms for access to uploaded files.
 
-## Referências
+## References
 
-- [PortSwigger Web Security Academy](https://portswigger.net/web-security/file-upload) (link para o tópico, não para a lab específica com solução)
+- [PortSwigger Web Security Academy](https://portswigger.net/web-security/file-upload) (link to the topic, not to the specific lab solution)
 - OWASP Web Security Testing Guide - File Upload Testing
 - CWE-434 - Unrestricted Upload of File with Dangerous Type

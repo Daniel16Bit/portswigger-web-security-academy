@@ -1,94 +1,88 @@
+> 🌐 **English** | [Português](LAB-05.pt-BR.md)
+
 # Lab: User ID controlled by request parameter with password disclosure
 
-**Módulo:** Server-side vulnerabilities //
-**Dificuldade:** Apprentice //
-**Categoria:** Access control //
-**Status:**  Resolvida //
+**Module:** Server-side vulnerabilities //
+**Difficulty:** Apprentice //
+**Category:** Access control //
+**Status:** Solved //
 
-## Objetivo
+## Goal
 
-Este laboratório possui uma página de conta de usuário que contém a senha atual do usuário, pré-preenchida em um campo de entrada mascarado.
-Para resolver o laboratório, recupere a senha do administrador e, em seguida, use-a para excluir o usuário carlos.
-Você pode fazer login na sua própria conta usando as seguintes credenciais: wiener:peter
+This lab has a user account page that contains the current user's password, pre-filled in a masked input field.
+To solve the lab, retrieve the administrator's password and then use it to delete the user carlos.
+You can log in to your own account with the following credentials: `wiener:peter`.
 
+## Recon
 
-# Reconhecimento
-
-Primeiro é preciso entender que o laboratório possui uma falha de escalonamento de privilégios **horizontal para vertical**, onde um usuário comum consegue elevar seus privilégios e acessar recursos administrativos.
+First, you need to understand that the lab has a **horizontal-to-vertical** privilege escalation flaw, where a regular user can elevate their privileges and access administrative resources.
 
 ```text
-                    Nível de Privilégio
+                    Privilege Level
                            ▲
                            │
         VERTICAL           │        Administrator / Root
-       (elevação)          │
+       (elevation)         │
                            │
 ───────────────────────────┼──────────────────────────────
                            │
-      HORIZONTAL           │    Usuário A  ←→  Usuário B
-     (mesmo nível)         │      (comum)        (comum)
+      HORIZONTAL           │    User A  ←→  User B
+     (same level)          │    (regular)   (regular)
                            │
-                           │    Usuário C
-                           │    (convidado/restrito)
+                           │    User C
+                           │    (guest/restricted)
                            ▼
 ```
 
+## Approach
 
-
-
-## Abordagem
-
-- Foi realizado um reconhecimento visual da aplicação para compreender sua estrutura e funcionamento.
-- Com base nas informações fornecidas pelo enunciado, foi possível definir o próximo passo da análise.
-- Sabendo o tipo de falha que há, fomos direto tentar verificar via inspeção de elementos, ver se há algo relacionado ao GUID ou algum arquivo aberto, mas sem resultado. 
-- Levando em conta que o ID fica exposto na URL, usamos isso mudando a URL de wiener para administrador
-- Por surpresa (quase obvia), era este o segredo para acessar, mas ainda faltava acessar a senha do usuario admin
-- levando isso em conta, usamos o BURP para capturar a solicitação de login do administrador e por tabela, a senha
+- A visual recon of the application was performed to understand its structure and behavior.
+- Based on the information provided by the lab description, it was possible to define the next step of the analysis.
+- Knowing the type of flaw, we went straight to element inspection to check for anything related to the GUID or any open file, but with no result.
+- Considering that the ID is exposed in the URL, we used that by changing the URL from `wiener` to `administrator`.
+- To no surprise (almost obvious), that was the trick to gain access — but we still needed the admin user's password.
+- With that in mind, we used Burp to capture the administrator's login request and, along with it, the password.
 
 ```
-
 <input required type="hidden" name="csrf" value="ePvtmGS5RalP3yR9KaVkvHYfCP5BHg4N">
 <input required type=password name=password **value='gtmaghlyeiy26zjvd4fb'** />
-
 ```
-- Com a senha do administrador em mãos, realizamos o login como administrator e navegamos até o painel administrativo (/admin).
-- Localizamos o usuário carlos e utilizamos a opção Delete para excluí-lo, resolvendo o laboratório.
 
+- With the administrator's password in hand, we logged in as `administrator` and navigated to the admin panel (`/admin`).
+- We located the user carlos and used the Delete option to remove him, solving the lab.
 
-## Payload / Técnica utilizada
+## Payload / Technique used
 
-- Manipulação manual do parâmetro id na URL — sem necessidade de ferramentas automatizadas.
-- Acesso direto a recurso não autorizado via IDOR.
-- A senha do administrador estava exposta em texto plano no atributo value de um campo <input type="password"> na resposta HTML.
+- Manual tampering with the `id` parameter in the URL — no automated tools needed.
+- Direct access to an unauthorized resource via IDOR.
+- The administrator's password was exposed in plaintext in the `value` attribute of an `<input type="password">` field in the HTML response.
 
+## Evidence
 
+![Result](imgs/lab05.png)
 
-## Evidência
+## Result
 
-![Resultado](imgs/lab05.png)
+The administrator's password was extracted via IDOR on the `/my-account` route and used to authenticate and delete the user carlos in the admin panel.
 
-## Resultado
+## Technical notes
 
-A senha do administrador foi extraída via IDOR na rota /my-account e utilizada para autenticar e excluir o usuário carlos no painel administrativo.
+### Horizontal/Vertical Broken Access Control (IDOR). The `/my-account` route does not implement:
 
-## Observações técnicas
+- Ownership verification of the resource — the server doesn't compare the `userId` of the authenticated session with the `userId` passed in the `id` parameter. A user logged in as `wiener` can access `administrator`'s data simply by changing the URL parameter.
+- Authorization middleware — there's no layer intercepting the request to validate whether the user is allowed to access the requested profile.
+- Output sanitization — the user's password is returned in the HTML in plaintext in the `value` attribute of the password field, allowing it to be extracted by inspecting the HTTP response.
+- Session-to-resource binding — the route accepts any identifier (`wiener`, `administrator`, `carlos`) in the `id` parameter, regardless of who is logged in.
 
-### Falha de Controle de Acesso Horizontal/Vertical (IDOR). A rota /my-account não implementa:
+The server accepts `GET /my-account?id=ANY_USER` requests from any authenticated user, without verifying whether the requested `id` belongs to the active session.
 
-- Verificação de identidade do proprietário do recurso — o servidor não compara o userId da sessão autenticada com o userId passado no parâmetro id. Um usuário logado como wiener consegue acessar os dados de administrator simplesmente alterando o parâmetro na URL.
-- Middleware de autorização — não há qualquer camada interceptando a requisição para validar se o usuário tem permissão para acessar o perfil solicitado.
-- Sanitização de saída — a senha do usuário é retornada no HTML em texto plano no atributo value do campo password, permitindo sua extração via inspeção da resposta HTTP.
-- Vínculo entre sessão e recurso — a rota aceita qualquer identificador (wiener, administrator, carlos) no parâmetro id, independentemente de quem está logado.
-- O servidor aceita requisições GET /my-account?id=QUALQUER_USUARIO de qualquer usuário autenticado, sem verificar se o id requisitado pertence à sessão ativa.
+### Recommended remediation
 
-### Remediação recomendada
+- Implement server-side verification comparing the `id` parameter with the authenticated session's ID.
+- Never expose passwords in the HTML response, even when masked on the front-end.
+- Use non-sequential/unpredictable identifiers (GUIDs) combined with resource-level authorization.
+- Implement role-based access control (RBAC) for administrative routes.
 
-- Implementar verificação server-side comparando o parâmetro id com o ID da sessão autenticada.
-- Nunca expor senhas no HTML da resposta, mesmo que mascaradas no front-end.
-- Utilizar identificadores não sequenciais/imprevisíveis (GUIDs) combinados com autorização em nível de recurso.
-- Implementar controle de acesso baseado em função (RBAC) para rotas administrativas.
+## References
 
-## Referências
-
-- [PortSwigger Web Security Academy](https://portswigger.net/web-security/access-control) (link para o tópico, não para a lab específica com solução)
-
+- [PortSwigger Web Security Academy](https://portswigger.net/web-security/access-control) (link to the topic, not to the specific lab solution)

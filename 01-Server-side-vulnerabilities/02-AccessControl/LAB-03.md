@@ -1,53 +1,53 @@
+> 🌐 **English** | [Português](LAB-03.pt-BR.md)
+
 # Lab: User role controlled by request parameter
 
-**Módulo:** Server-side vulnerabilities //
-**Dificuldade:** Apprentice //
-**Categoria:** Access control //
-**Status:**  Resolvida //
+**Module:** Server-side vulnerabilities //
+**Difficulty:** Apprentice //
+**Category:** Access control //
+**Status:** Solved //
 
-## Objetivo
+## Goal
 
+- This lab has an admin panel at `/admin` that identifies administrators through a cookie that can be forged.
+- Solve the lab by accessing the admin panel and using it to delete the user carlos.
+- You can log in to your own account with the following credentials: `wiener:peter`.
 
-- Este laboratório possui um painel de administração em /admin, que identifica os administradores por meio de um cookie que pode ser falsificado.
-- Resolva o laboratório acessando o painel de administração e usando-o para excluir o usuário carlos.
-- Você pode fazer login na sua própria conta usando as seguintes credenciais: wiener:peter
+## Recon
 
-# Reconhecimento
+As stated in the lab description, this lab has an admin panel, but access is granted only to the correct role. With that in mind, our goal is to bypass that protection.
 
-Assim como informado pelo enunciado, este lab tem uma um painel administrativo, mas com acesso somente com o perfil correto. Com essa ideia, nosso objetivo é burlar essa proteção.
+## Approach
 
-## Abordagem
-- Foi realizado um reconhecimento visual da aplicação para compreender sua estrutura e funcionamento.
-- Com base nas informações fornecidas pelo enunciado, foi possível definir o próximo passo da análise.
-- Nesse caso há duas formas de prosseguirmos: A primeira é interceptar via burp suite, mas iremos pela segunda opção.
-- Como segunda forma, simplesmente logamos no usuario e logamos via as credencias passadas pelo enunciado. 
-- Após isso, analisamos foi aba **Application**, em busca de vulnerabilidades na sub-aba **Storage**.
-- Após analisar seu conteúdo, foi encontrado que o CARGO de Admin pode ser modificado via cookies.
-- Com isso, mudamos o admin=true
+- A visual recon of the application was performed to understand its structure and behavior.
+- Based on the information provided by the lab description, it was possible to define the next step of the analysis.
+- In this case there are two ways to proceed: the first is to intercept the request via Burp Suite, but we'll go with the second option.
+- As the second approach, we simply logged in with the credentials provided in the lab description.
+- After that, we analyzed the **Application** tab, looking for vulnerabilities in the **Storage** sub-tab.
+- After analyzing its contents, we found that the Admin ROLE can be modified through cookies.
+- With that, we set `admin=true`.
 
+- Inspection of the browser's stored data (Application → Storage → Cookies).
+- Tampering with a client-side cookie to escalate privileges (vertical privilege escalation).
 
-## Payload / Técnica utilizada
+In this lab it was not necessary to intercept requests with Burp (though the same result is achievable by editing the `Cookie` header in Proxy/Repeater). The exploitation consisted of editing the `Admin` cookie value in the browser's storage from `false` to `true`. Because the server trusts this client-controlled cookie as the source of truth for the user's role — instead of deriving the role server-side from the session — resending any request with `Admin=true` is enough to be treated as an administrator and reach `/admin`.
 
-Neste laboratório não foi necessário utilizar payloads ou manipular requisições. A exploração consistiu apenas na análise do código-fonte exposto para identificar informações sensíveis, resultando na descoberta do diretório administrativo.
+## Evidence
 
+![Result](imgs/lab03.png)
 
-## Evidência
+## Result
 
-![Resultado](imgs/lab03.png)
-## Resultado
+User deleted successfully after breaking into the admin panel.
 
-Usuario excluido com sucesso ao invadir o painel admin.
+## Technical notes
 
-## Observações técnicas
+- Never store roles/permissions in cookies. Use only a random session ID.
+- Validate authorization on the server for every request to sensitive pages, querying the database or the session.
+- Use server-side sessions (native PHP, Redis, database) instead of editable cookies.
+- Sign/encrypt cookies if you need to store data on the client (e.g., a signed JWT).
+- Test whether a regular user can reach `/admin` or manually modify cookies — that alone would have caught the flaw.
 
-- Nunca armazenar papéis/permissões em cookies. Use apenas um ID de sessão aleatório.
-- Validar autorização no servidor a cada requisição a páginas sensíveis, consultando o banco de dados ou a sessão.
-- Usar sessões server-side (PHP nativo, Redis, banco de dados) em vez de cookies editáveis.
-- Assinar/criptografar cookies se precisar armazenar dados no cliente (ex: JWT com assinatura).
-- Testar se um usuário comum consegue acessar /admin ou se consegue modificar cookies manualmente — isso já teria detectado a falha.
+## References
 
-
-## Referências
-
-- [PortSwigger Web Security Academy](https://portswigger.net/web-security/access-control) (link para o tópico, não para a lab específica com solução)
-
+- [PortSwigger Web Security Academy](https://portswigger.net/web-security/access-control) (link to the topic, not to the specific lab solution)

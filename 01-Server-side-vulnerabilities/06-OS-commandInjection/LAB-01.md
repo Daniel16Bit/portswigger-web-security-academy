@@ -1,102 +1,103 @@
+> 🌐 **English** | [Português](LAB-01.pt-BR.md)
+
 # Lab: OS command injection, simple case
 
-**Módulo:** Server-side vulnerabilities //
-**Dificuldade:** Apprentice //
-**Categoria:** OS command injection //
-**Status:** Resolvida
+**Module:** Server-side vulnerabilities //
+**Difficulty:** Apprentice //
+**Category:** OS command injection //
+**Status:** Solved //
 
-## Objetivo
+## Goal
 
-Este laboratório contém uma vulnerabilidade de **OS Command Injection** na funcionalidade de consulta de estoque dos produtos.
+This lab contains an **OS Command Injection** vulnerability in the product stock check feature.
 
-Para resolver o laboratório, era necessário explorar essa vulnerabilidade para executar o comando `whoami` no servidor e identificar o usuário responsável pela execução da aplicação.
+To solve the lab, it was necessary to exploit this vulnerability to run the `whoami` command on the server and identify the user running the application.
 
-## Reconhecimento
+## Recon
 
-O enunciado do laboratório indica a presença de uma vulnerabilidade de **OS Command Injection**.
+The lab description indicates the presence of an **OS Command Injection** vulnerability.
 
-Com base nas orientações fornecidas pela própria PortSwigger durante o laboratório, foi realizada a análise das requisições responsáveis pela consulta de estoque dos produtos.
+Based on the guidance provided by PortSwigger itself during the lab, the requests responsible for the product stock check were analyzed.
 
-Ao utilizar a funcionalidade **Check stock** e interceptar a comunicação através do Burp Suite, foi identificada a requisição:
+By using the **Check stock** feature and intercepting the communication with Burp Suite, the following request was identified:
 
 ```http
 POST /product/stock
 ```
 
-Essa requisição enviava os parâmetros:
+This request sent the parameters:
 
 ```text
 productId=3&storeId=3
 ```
 
-Como esses parâmetros eram utilizados pelo servidor para consultar o estoque do produto, surgiu a hipótese de que algum deles pudesse estar sendo concatenado diretamente a um comando do sistema operacional sem validação adequada.
+Since these parameters were used by the server to query the product stock, the hypothesis arose that one of them might be concatenated directly into an operating-system command without proper validation.
 
-## Abordagem
+## Approach
 
-- Acessamos a página de um produto qualquer.
-- Selecionamos a opção **Check stock**.
-- Interceptamos a requisição `POST /product/stock` utilizando o Burp Suite.
-- Encaminhamos a requisição para o Repeater.
-- Modificamos o parâmetro `storeId`, acrescentando um operador de shell (`|`) seguido do comando `whoami`.
+- Accessed any product page.
+- Selected the **Check stock** option.
+- Intercepted the `POST /product/stock` request using Burp Suite.
+- Forwarded the request to Repeater.
+- Modified the `storeId` parameter, appending a shell operator (`|`) followed by the `whoami` command.
 
-O payload utilizado foi:
+The payload used was:
 
 ```text
 productId=3&storeId=3|whoami
 ```
 
-- Após reenviar a requisição, o servidor executou o comando adicional.
-- A resposta retornou o usuário responsável pela execução da aplicação, confirmando a existência da vulnerabilidade de **OS Command Injection**.
-- Com isso, o laboratório foi concluído.
+- After resending the request, the server executed the additional command.
+- The response returned the user running the application, confirming the **OS Command Injection** vulnerability.
+- With that, the lab was solved.
 
-## Payload / Técnica utilizada
+## Payload / Technique used
 
-### Requisição original
+### Original request
 
 ```text
 productId=3&storeId=3
 ```
 
-### Payload utilizado
+### Payload used
 
 ```text
 productId=3&storeId=3|whoami
 ```
 
-## Evidência
+## Evidence
 
-![Evidência-01](imgs/Lab-01A.png)
+![Evidence-01](imgs/Lab-01A.png)
 
-![Evidência-02](imgs/Lab-01B.png)
+![Evidence-02](imgs/Lab-01B.png)
 
-## Resultado
+## Result
 
-A exploração confirmou uma vulnerabilidade de **OS Command Injection**, permitindo a execução de comandos arbitrários no sistema operacional por meio de um parâmetro controlado pelo usuário.
+The exploitation confirmed an **OS Command Injection** vulnerability, allowing arbitrary commands to be executed on the operating system through a user-controlled parameter.
 
-Foi possível executar o comando `whoami`, obtendo o usuário responsável pela execução da aplicação no servidor e comprovando a execução remota de comandos.
+It was possible to run the `whoami` command, obtaining the user running the application on the server and proving remote command execution.
 
-## Observações técnicas
+## Technical notes
 
-### Por que a falha ocorre?
+### Why does the flaw occur?
 
-A aplicação utiliza um parâmetro fornecido pelo usuário para compor um comando do sistema operacional sem realizar validação ou sanitização adequada.
+The application uses a user-supplied parameter to build an operating-system command without performing proper validation or sanitization.
 
-O operador `|` é interpretado pelo shell como um operador de encadeamento de comandos, fazendo com que o comando original seja executado normalmente e, em seguida, execute também o comando informado pelo atacante.
+The `|` operator is interpreted by the shell as a command-chaining (pipe) operator, causing the original command to run normally and then also execute the command supplied by the attacker.
 
-Essa prática permite que usuários maliciosos executem comandos arbitrários no sistema operacional, podendo resultar em comprometimento total do servidor.
+This practice lets malicious users run arbitrary commands on the operating system, potentially resulting in a full server compromise.
 
-### Como mitigar?
+### How to mitigate?
 
-- Evitar a execução de comandos do sistema operacional sempre que existir uma alternativa utilizando funções nativas da linguagem.
-- Nunca concatenar diretamente dados controlados pelo usuário em comandos do sistema.
-- Validar rigorosamente todos os parâmetros recebidos.
-- Utilizar listas de permissões (*allowlists*) para valores esperados.
-- Quando necessário executar comandos externos, utilizar APIs que não invoquem o shell do sistema.
-- Executar a aplicação com o princípio do menor privilégio, limitando o impacto de uma eventual exploração.
+- Avoid running operating-system commands whenever there is an alternative using the language's native functions.
+- Never concatenate user-controlled data directly into system commands.
+- Strictly validate all received parameters.
+- Use allowlists for expected values.
+- When it's necessary to run external commands, use APIs that don't invoke the system shell.
+- Run the application under the principle of least privilege, limiting the impact of a possible exploitation.
 
-## Referências
+## References
 
-- [PortSwigger Web Security Academy](https://portswigger.net/web-security/os-command-injection) (link para o tópico, não para a lab específica com solução)
+- [PortSwigger Web Security Academy](https://portswigger.net/web-security/os-command-injection) (link to the topic, not to the specific lab solution)
 - OWASP Web Security Testing Guide - Command Injection
 - CWE-78 - Improper Neutralization of Special Elements used in an OS Command
-

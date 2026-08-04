@@ -1,54 +1,57 @@
+> 🌐 **English** | [Português](LAB-02.pt-BR.md)
+
 # Lab: Unprotected admin functionality with unpredictable URL
 
-**Módulo:** Server-side vulnerabilities //
-**Dificuldade:** Apprentice //
-**Categoria:** Access control //
-**Status:**  Resolvida //
+**Module:** Server-side vulnerabilities //
+**Difficulty:** Apprentice //
+**Category:** Access control //
+**Status:** Solved //
 
-## Objetivo
+## Goal
 
-Igual ao anterior, devemos acessar o painel admin do sistema, mas dessa vez a URL está localizada de forma diferente dentro da aplicação.
-Devemos descobrir e deleter o user CARLOS
+Same as the previous lab: we must access the system's admin panel, but this time the URL is placed differently within the application.
+We must find it and delete the user CARLOS.
 
-# Reconhecimento
+## Recon
 
-Assim como informado pelo enunciado, este lab tem uma um painel administrativo sem proteção, mas com a URL aplicada de forma diferente. Com essa ideia, testamos o /robots.txt para verificar se retornaria algo interessante, mas nada incomum. Pensando assim, precisamos seguir por outro caminho, por isso foi usado o modo desenvolvedor para tal.
+As stated in the lab description, this lab has an unprotected admin panel, but with the URL exposed differently. With that in mind, I tested `/robots.txt` to see whether it would return anything interesting, but nothing unusual came up. So I had to take another route, and for that I used the browser's developer tools.
 
-## Abordagem
+## Approach
 
-- Foi realizado um reconhecimento visual da aplicação para compreender sua estrutura e funcionamento.
-- Com base nas informações fornecidas pelo enunciado, foi possível definir o próximo passo da análise.
-- Utilizando as ferramentas de desenvolvedor do navegador (F12), foram inspecionados os elementos da página, porém nenhuma informação relevante foi encontrada.
-- A análise foi então direcionada para a aba **Sources**, em busca de arquivos expostos que pudessem conter informações sensíveis.
-- Foi identificado o arquivo `index`, que estava acessível sem qualquer proteção.
-- Após analisar seu conteúdo, foi encontrado o diretório administrativo `/admin-ff38xv`, permitindo dar continuidade ao laboratório.
+- A visual recon of the application was performed to understand its structure and behavior.
+- Based on the information provided by the lab description, it was possible to define the next step of the analysis.
+- Using the browser's developer tools (F12), the page elements were inspected, but no relevant information was found.
+- The analysis was then directed to the **Sources** tab, looking for exposed files that could contain sensitive information.
+- The `index` file was identified, accessible without any protection.
+- After analyzing its contents, the admin directory `/admin-ff38xv` was found, allowing me to continue the lab.
 
+## Payload / Technique used
 
-## Payload / Técnica utilizada
+- Web application recon.
+- Source-code inspection using the browser DevTools.
+- Analysis of exposed files (*Source Code Disclosure*).
 
-- Reconhecimento de aplicação web.
-- Inspeção do código-fonte utilizando as DevTools do navegador.
-- Análise de arquivos expostos (*Source Code Disclosure*).
+In this lab it was not necessary to use payloads or manipulate requests. The exploitation consisted only of analyzing the exposed source code to identify sensitive information, resulting in the discovery of the admin directory.
 
-Neste laboratório não foi necessário utilizar payloads ou manipular requisições. A exploração consistiu apenas na análise do código-fonte exposto para identificar informações sensíveis, resultando na descoberta do diretório administrativo.
+## Evidence
 
-## Evidência
+![Result](imgs/lab02.png)
 
-![Resultado](imgs/lab02.png)
-## Resultado
+## Result
 
-Usuario excluido com sucesso ao invadir o painel admin.
+User deleted successfully after breaking into the admin panel.
 
-## Observações técnicas
-Falha de Controle de Acesso. A rota /admin-ff38xv não implementa:
+## Technical notes
 
-- Verificação de sessão (cookie de autenticação)
-- Middleware de autorização
-- Token CSRF
-- Qualquer tipo de validação server-side
-O servidor aceita requisições GET para essa rota de qualquer origem, sem checar quem está fazendo a requisição.
+Broken Access Control. The `/admin-ff38xv` route does not implement:
 
+- Session verification (authentication cookie)
+- Authorization middleware
+- CSRF token
+- Any kind of server-side validation
 
-## Referências
+The server accepts GET requests to this route from any origin, without checking who is making the request.
 
-- [PortSwigger Web Security Academy](https://portswigger.net/web-security/access-control) (link para o tópico, não para a lab específica com solução)
+## References
+
+- [PortSwigger Web Security Academy](https://portswigger.net/web-security/access-control) (link to the topic, not to the specific lab solution)

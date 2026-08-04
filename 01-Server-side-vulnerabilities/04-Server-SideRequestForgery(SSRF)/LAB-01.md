@@ -1,79 +1,79 @@
+> 🌐 **English** | [Português](LAB-01.pt-BR.md)
+
 # LAB: Basic SSRF against the local server
 
-**Módulo:** Server-side vulnerabilities //
-**Dificuldade:** Apprentice //
-**Categoria:** Server-side request forgery (SSRF) //
-**Status:** Resolvida //
+**Module:** Server-side vulnerabilities //
+**Difficulty:** Apprentice //
+**Category:** Server-side request forgery (SSRF) //
+**Status:** Solved //
 
-## Objetivo
+## Goal
 
-Este laboratório possui um recurso de verificação de estoque que obtém dados de um sistema interno.
+This lab has a stock check feature that fetches data from an internal system.
 
-Para resolver o laboratório, altere a URL da verificação de estoque para acessar a interface de administração em http://localhost/admin e exclua o usuário Carlos.
+To solve the lab, change the stock check URL to access the admin interface at `http://localhost/admin` and delete the user Carlos.
 
-## Reconhecimento
+## Recon
 
-O laboratório disponibiliza uma funcionalidade de verificação de estoque (Check stock), que realiza uma requisição para um servidor interno responsável por consultar a disponibilidade dos produtos.
+The lab provides a stock check feature (Check stock) that makes a request to an internal server responsible for querying product availability.
 
-Ao interceptar a requisição utilizando o Burp Suite, foi possível identificar o parâmetro stockApi, responsável por informar ao servidor qual endereço deve ser consultado para obter as informações de estoque.
+By intercepting the request with Burp Suite, it was possible to identify the `stockApi` parameter, which tells the server which address to query for the stock information.
 
-Essa característica indica uma possível vulnerabilidade de Server-Side Request Forgery (SSRF), pois a aplicação realiza requisições HTTP em nome do usuário utilizando a URL fornecida pelo parâmetro.
+This characteristic indicates a possible Server-Side Request Forgery (SSRF) vulnerability, since the application makes HTTP requests on the user's behalf using the URL provided in the parameter.
 
-## Abordagem
+## Approach
 
-- Acessamos a página de um produto qualquer.
-- Selecionamos a opção Check stock para gerar a requisição ao servidor.
-- Interceptamos a requisição POST /product/stock utilizando o Burp Suite.
-- Identificamos o parâmetro stockApi, que apontava para o servidor interno de estoque.
-- Alteramos seu valor para http://localhost/admin.
-- A resposta retornou o painel administrativo interno da aplicação, revelando o endpoint responsável pela exclusão de usuários.
-- Identificamos a URL /delete?username=carlos.
-- Modificamos novamente o parâmetro stockApi para apontar diretamente para esse endpoint.
-- Após enviar a requisição, o usuário carlos foi removido e o laboratório foi concluído.
+- Accessed any product page.
+- Selected the Check stock option to generate the request to the server.
+- Intercepted the `POST /product/stock` request using Burp Suite.
+- Identified the `stockApi` parameter, which pointed to the internal stock server.
+- Changed its value to `http://localhost/admin`.
+- The response returned the application's internal admin panel, revealing the endpoint responsible for deleting users.
+- Identified the URL `/delete?username=carlos`.
+- Modified the `stockApi` parameter again to point directly to that endpoint.
+- After sending the request, the user carlos was removed and the lab was solved.
 
-## Payload / Técnica utilizada
+## Payload / Technique used
 
 ```
 POST /product/stock HTTP/1.1
 
 stockApi=http://localhost/admin
-
 ```
-Após identificar o endpoint administrativo:
+
+After identifying the admin endpoint:
 
 ```
 POST /product/stock HTTP/1.1
 
 stockApi=http://localhost/admin/delete?username=carlos
-
 ```
 
-## Evidência
+## Evidence
 
-![Evidência-01](imgs/Lab01%20-%20A.png)
-![Evidência-02](imgs/Lab01%20-%20B.png)
+![Evidence-01](imgs/Lab01%20-%20A.png)
+![Evidence-02](imgs/Lab01%20-%20B.png)
 
-## Resultado
+## Result
 
-A vulnerabilidade permitiu que o servidor realizasse requisições HTTP para recursos internos inacessíveis externamente.
+The vulnerability allowed the server to make HTTP requests to internal resources that are not accessible externally.
 
-## Observações técnicas
+## Technical notes
 
-### Por que a falha ocorre?
+### Why does the flaw occur?
 
-- A aplicação aceita uma URL fornecida pelo usuário e realiza a requisição diretamente no lado do servidor, sem validar adequadamente o destino.
-- Como o servidor possui acesso à rede interna, um atacante pode utilizá-lo para acessar recursos que normalmente não estariam disponíveis externamente.
-- Isso permite consultar serviços internos, acessar interfaces administrativas e, em alguns casos, interagir com outros sistemas da infraestrutura.
+- The application accepts a user-supplied URL and makes the request directly on the server side, without properly validating the destination.
+- Since the server has access to the internal network, an attacker can use it to reach resources that would normally not be available externally.
+- This allows querying internal services, accessing admin interfaces and, in some cases, interacting with other systems in the infrastructure.
 
-### Como mitigar?
+### How to mitigate?
 
-- Nunca permitir que o cliente controle diretamente a URL de destino das requisições.
-- Utilizar uma lista de permissões (*allowlist*) contendo apenas os domínios necessários.
-- Bloquear requisições destinadas a endereços internos, como `localhost`, `127.0.0.1` e redes privadas.
-- Validar rigorosamente o protocolo e o destino das URLs recebidas.
-- Segmentar a rede interna e restringir o acesso dos serviços a recursos administrativos.
+- Never let the client directly control the destination URL of the requests.
+- Use an allowlist containing only the necessary domains.
+- Block requests aimed at internal addresses, such as `localhost`, `127.0.0.1` and private networks.
+- Strictly validate the protocol and destination of the received URLs.
+- Segment the internal network and restrict services' access to administrative resources.
 
+## References
 
-## Referências
-
-- [PortSwigger Web Security Academy](https://portswigger.net/web-security/ssrf) (link para o tópico, não para a lab específica com solução)
+- [PortSwigger Web Security Academy](https://portswigger.net/web-security/ssrf) (link to the topic, not to the specific lab solution)

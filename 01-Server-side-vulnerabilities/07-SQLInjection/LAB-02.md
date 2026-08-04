@@ -1,34 +1,36 @@
+> 🌐 **English** | [Português](LAB-02.pt-BR.md)
+
 # Lab: SQL injection vulnerability allowing login bypass
 
-**Módulo:** SQL injection //
-**Dificuldade:** Apprentice //
-**Categoria:** SQL Injection //
-**Status:** Resolvida
+**Module:** SQL injection //
+**Difficulty:** Apprentice //
+**Category:** SQL Injection //
+**Status:** Solved //
 
-## Objetivo
+## Goal
 
-Este laboratório contém uma vulnerabilidade de **SQL Injection** na funcionalidade de autenticação.
+This lab contains a **SQL Injection** vulnerability in the authentication feature.
 
-Para resolver o laboratório, era necessário explorar essa vulnerabilidade para realizar login como o usuário **administrator**, sem conhecer sua senha.
+To solve the lab, it was necessary to exploit this vulnerability to log in as the **administrator** user, without knowing their password.
 
-## Reconhecimento
+## Recon
 
-O laboratório disponibiliza uma página de autenticação composta pelos campos **Username** e **Password**.
+The lab provides a login page composed of the **Username** and **Password** fields.
 
-Como informado pelo enunciado, a aplicação é vulnerável a **SQL Injection** durante o processo de login, indicando que os valores informados pelo usuário provavelmente são inseridos diretamente na consulta SQL responsável pela autenticação.
+As stated by the lab description, the application is vulnerable to **SQL Injection** during login, indicating that the values supplied by the user are likely inserted directly into the SQL query responsible for authentication.
 
-Essa característica sugere a possibilidade de alterar a estrutura da consulta para ignorar a validação da senha.
+This characteristic suggests the possibility of altering the query's structure to bypass the password check.
 
-## Abordagem
+## Approach
 
-- Acessamos a página de login da aplicação.
-- No campo **Username**, informamos um payload de SQL Injection para encerrar a string e comentar o restante da consulta.
-- No campo **Password**, informamos um valor qualquer, pois sua verificação seria ignorada pela injeção.
-- Após enviar o formulário, a aplicação autenticou a sessão como o usuário **administrator**, concluindo o laboratório.
+- Accessed the application's login page.
+- In the **Username** field, entered a SQL Injection payload to close the string and comment out the rest of the query.
+- In the **Password** field, entered `--`, since its check would be commented out by the injection (any value would work here, as the password is never evaluated).
+- After submitting the form, the application authenticated the session as the **administrator** user, completing the lab.
 
-## Payload / Técnica utilizada
+## Payload / Technique used
 
-### Credenciais utilizadas
+### Credentials used
 
 **Username**
 
@@ -42,18 +44,18 @@ administrator'--
 --
 ```
 
-### Exemplo da lógica da consulta
+### Query logic example
 
-Consulta esperada pela aplicação:
+Query expected by the application:
 
 ```sql
 SELECT *
 FROM users
 WHERE username = 'administrator'
-AND password = 'senha';
+AND password = 'password';
 ```
 
-Consulta após a injeção:
+Query after the injection:
 
 ```sql
 SELECT *
@@ -62,45 +64,45 @@ WHERE username = 'administrator'--'
 AND password = '--';
 ```
 
-Como `--` inicia um comentário em SQL, todo o restante da instrução é ignorado pelo banco de dados, incluindo a verificação da senha.
+Since `--` starts a comment in SQL, everything after it — including the `AND password = '...'` check — is ignored by the database. The query effectively becomes `WHERE username = 'administrator'`, so authentication succeeds based on the username alone. The value entered in the password field (`--`) is never evaluated by the database, since it falls inside the commented-out portion.
 
-## Evidência
+## Evidence
 
-![Evidência-01](imgs/Lab-02.png)
+![Evidence-01](imgs/Lab-02.png)
 
-## Resultado
+## Result
 
-A exploração confirmou uma vulnerabilidade de **SQL Injection** na funcionalidade de autenticação.
+The exploitation confirmed a **SQL Injection** vulnerability in the authentication feature.
 
-Foi possível contornar completamente a verificação da senha e autenticar-se como o usuário **administrator**, demonstrando que a aplicação concatena diretamente dados controlados pelo usuário em consultas SQL.
+It was possible to completely bypass the password check and authenticate as the **administrator** user, demonstrating that the application concatenates user-controlled data directly into SQL queries.
 
-## Observações técnicas
+## Technical notes
 
-### Por que a falha ocorre?
+### Why does the flaw occur?
 
-A aplicação constrói a consulta SQL utilizando diretamente os valores informados pelo usuário, sem utilizar consultas parametrizadas.
+The application builds the SQL query using the values supplied by the user directly, without using parameterized queries.
 
-Ao inserir o payload:
+By entering the payload:
 
 ```text
 administrator'--
 ```
 
-a string é encerrada prematuramente e o operador `--` transforma o restante da consulta em comentário.
+the string is closed prematurely and the `--` operator turns the rest of the query into a comment.
 
-Dessa forma, a condição responsável por verificar a senha deixa de ser executada, permitindo que a autenticação seja realizada apenas com base no nome do usuário.
+This way, the condition responsible for checking the password is no longer executed, allowing authentication based only on the username.
 
-### Como mitigar?
+### How to mitigate?
 
-- Utilizar **Prepared Statements** (consultas parametrizadas) para todas as consultas ao banco de dados.
-- Nunca concatenar diretamente entradas fornecidas pelo usuário em instruções SQL.
-- Validar e sanitizar os dados recebidos.
-- Implementar autenticação utilizando consultas parametrizadas e comparação segura de credenciais.
-- Aplicar o princípio do menor privilégio às contas utilizadas pela aplicação para acesso ao banco de dados.
-- Evitar mensagens de erro detalhadas que possam auxiliar na exploração da vulnerabilidade.
+- Use **Prepared Statements** (parameterized queries) for all database queries.
+- Never concatenate user-supplied input directly into SQL statements.
+- Validate and sanitize the received data.
+- Implement authentication using parameterized queries and secure credential comparison.
+- Apply the principle of least privilege to the accounts used by the application to access the database.
+- Avoid detailed error messages that could aid in exploiting the vulnerability.
 
-## Referências
+## References
 
-- [PortSwigger Web Security Academy](https://portswigger.net/web-security/sql-injection) (link para o tópico, não para a lab específica com solução)
+- [PortSwigger Web Security Academy](https://portswigger.net/web-security/sql-injection) (link to the topic, not to the specific lab solution)
 - OWASP Web Security Testing Guide - SQL Injection
 - CWE-89 - Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')
