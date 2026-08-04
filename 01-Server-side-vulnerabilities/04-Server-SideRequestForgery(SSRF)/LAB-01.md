@@ -1,4 +1,4 @@
-# Basic SSRF against the local server
+# LAB: Basic SSRF against the local server
 
 **Módulo:** Server-side vulnerabilities //
 **Dificuldade:** Apprentice //
