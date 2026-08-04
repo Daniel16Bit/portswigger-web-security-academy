@@ -12,13 +12,13 @@ Módulo de nivel "APRENDIZ" do Burp. O Lab introduz de forma simples vulnerabili
 
 | Lab | Dificuldade | Status | Link |
 |-----|-------------|--------|------|
-| Path traversal | Apprentice | ✅ | [resolução](./labs/nome-da-lab-1.md) |
-| Access control | Apprentice | ✅ | [resolução](./labs/nome-da-lab-2.md) |
-| Authentication | Apprentice | ✅ | [resolução](./labs/nome-da-lab-1.md) |
-| Server-side request forgery (SSRF) | Apprentice | ✅ | [resolução](./labs/nome-da-lab-1.md) |
-| File upload vulnerabilities | Apprentice | ✅ | [resolução](./labs/nome-da-lab-1.md) |
-| OS command injection | Apprentice | ✅ | [resolução](./labs/nome-da-lab-1.md) |
-| SQL injection | Apprentice | ✅ | [resolução](./labs/nome-da-lab-1.md) |
+| Path traversal | Apprentice | ✅ | [resolução](./01-PathTransversal/) |
+| Access control | Apprentice | ✅ | [resolução](./02-AccessControl/) |
+| Authentication | Apprentice | ✅ | [resolução](./03-Authentication/) |
+| Server-side request forgery (SSRF) | Apprentice | ✅ | [resolução](./04-Server-SideRequestForgery(SSRF)/) |
+| File upload vulnerabilities | Apprentice | ✅ | [resolução](./05-File-uploadVulnerabilities/) |
+| OS command injection | Apprentice | ✅ | [resolução](./06-OS-commandInjection/) |
+| SQL injection | Apprentice | ✅ | [resolução](./07-SQLInjection/) |
 
 ## Anotações gerais do módulo
 
