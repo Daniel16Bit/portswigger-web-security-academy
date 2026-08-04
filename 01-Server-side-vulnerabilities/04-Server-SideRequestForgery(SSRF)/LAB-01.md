@@ -3,7 +3,7 @@
 **Módulo:** Server-side vulnerabilities //
 **Dificuldade:** Apprentice //
 **Categoria:** Server-side request forgery (SSRF) //
-**Status:** Resolvida
+**Status:** Resolvida //
 
 ## Objetivo
 
