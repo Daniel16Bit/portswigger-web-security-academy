@@ -66,7 +66,7 @@ Como `--` inicia um comentário em SQL, todo o restante da instrução é ignora
 
 ## Evidência
 
-![Evidência-01](imgs/Lab-01A.png)
+![Evidência-01](imgs/Lab-02.png)
 
 ## Resultado
 
